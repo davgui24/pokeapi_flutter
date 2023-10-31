@@ -60,6 +60,7 @@ class DetailOfItem extends StatelessWidget {
               listEffects.add(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       width: width * 0.2,
@@ -81,7 +82,7 @@ class DetailOfItem extends StatelessWidget {
                           style: TextStyle(
                              color: getColors()[0],
                             fontSize: responsive.ip(1.5),
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.normal,
                             // fontStyle: FontStyle.italic
                           ),
                         ),
@@ -102,8 +103,9 @@ class DetailOfItem extends StatelessWidget {
                     height: height * 0.01,
                   ),
                   Container(
+                    margin: EdgeInsets.symmetric(vertical: 10),
                     width: width * 0.9,
-                    height: height * 0.2,
+                    height: height * 0.3,
                     child: SingleChildScrollView(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -111,9 +113,9 @@ class DetailOfItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                   Divider(
-                    color: getColors()[0],
-                    indent: 10,
+                   Container(
+                    height: height * 0.01,
+                    color: Colors.grey,
                    ),
                   _tablePokemon(height, width, responsive, snapshot.data["pokemon"]),
                 ],
@@ -153,7 +155,7 @@ class DetailOfItem extends StatelessWidget {
       }
 
     return Container(
-              height: height * 0.62,
+              height: height * 0.52,
               width: width,
                 child: SingleChildScrollView(
                 child: DataTable(
@@ -161,7 +163,7 @@ class DetailOfItem extends StatelessWidget {
                     horizontalMargin: 12,
                     columns: [
                       DataColumn(
-                        label: Text('Nombre',style: TextStyle(color: Color(0xff999999), fontSize: responsive.ip(2), fontWeight: FontWeight.w600)),
+                        label: Text('Name',style: TextStyle(color: Color(0xff999999), fontSize: responsive.ip(2), fontWeight: FontWeight.w600)),
                       ),
                       DataColumn(
                         label: Text('URL',style: TextStyle(color: Color(0xff999999), fontSize: responsive.ip(2), fontWeight: FontWeight.w600)),
