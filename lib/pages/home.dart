@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:pokemon/blocs/bloc_api_pokemon.dart';
 import 'package:pokemon/src/services/colores.dart';
 import 'package:pokemon/src/services/http_v1.dart';
 import 'package:pokemon/src/ulils/responsive.dart';
+import 'package:searchbar_animation/searchbar_animation.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,11 +14,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  TextEditingController controladorBusqueda = TextEditingController();
+  List items = [];
+
+
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    EasyLoading.show(status: 'Cargando elementos...');
     HttpV1().pokemonAbility().then((value){
+      EasyLoading.dismiss();
+      items = value["results"];
       blocApiPokemon.changePokemons(value["results"]);
     });
   }
@@ -40,7 +50,7 @@ class _HomeState extends State<Home> {
                     elevation: 0,
                     centerTitle: true,
                     backgroundColor: getColors()[0],
-                    title: Text("POKEMÓN",
+                    title: Text("POKEAPI",
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               color: Colors.white,
@@ -64,16 +74,16 @@ class _HomeState extends State<Home> {
                     listWidgets.add(
                       ListTile(
                         contentPadding: EdgeInsets.all(responsive.ip(2)),
-                        title: Text('${p["name"].toString().toUpperCase()}',
+                        title: Text(p["name"].toString().toUpperCase(),
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               color: getColors()[0],
-                              fontSize: responsive.ip(3),
+                              fontSize: responsive.ip(2.8),
                               fontWeight: FontWeight.bold,
                               // fontStyle: FontStyle.italic
                             ),
                           ),
-                        subtitle: Text('${p["url"]}',
+                        subtitle: Text(p["url"],
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               color: Colors.grey,
@@ -84,13 +94,23 @@ class _HomeState extends State<Home> {
                           ),
                           trailing: IconButton(
                             icon: Icon(Icons.arrow_right, color: getColors()[0], size: responsive.ip(4)),
-                            onPressed: (){},
+                            onPressed: (){
+                              Navigator.pushNamed(context, 'detail_of_item', arguments: {"url":  p["url"], "name": p["name"]});
+                            },
                           ),
+                          onTap: (){
+                             Navigator.pushNamed(context, 'detail_of_item', arguments: {"url":  p["url"], "name": p["name"]});
+                          },
                        )
                     );
                   }
                   return Column(
-                    children: listWidgets,
+                    children: [
+                      _search(height, width, responsive),
+                      Column(
+                        children: listWidgets,
+                      ),
+                    ],
                   );
                 }else if(snapshot.hasError){
                   return Text("Error al obtener la lista",
@@ -101,14 +121,7 @@ class _HomeState extends State<Home> {
                     )
                   );
                 }else{
-                 return Center(
-                    child: Container(
-                      margin: EdgeInsets.only(top: responsive.ip(10)),
-                      child: CircularProgressIndicator(
-                        color: getColors()[0],
-                      ),
-                    ),
-                  );
+                 return Container();
                 }
               }
             )
@@ -117,4 +130,50 @@ class _HomeState extends State<Home> {
       )
       );
   }
+
+
+  Widget _search(double height, double width, Responsive responsive){
+   return  StreamBuilder(
+    stream: blocApiPokemon.pokemonsStream,
+     builder: (_, AsyncSnapshot<List> snapshot) {
+      if(snapshot.hasData){
+        return Container(
+                  height: responsive.ip(6),
+                  width: width * 0.9,
+                  child: SearchBarAnimation(
+                          hintText: "Buscar item",
+                          textEditingController: controladorBusqueda,
+                          isOriginalAnimation: true,
+                          enableKeyboardFocus: true,
+                          trailingWidget: Icon(Icons.search, color:  getColors()[0]),
+                          secondaryButtonWidget: const Icon(Icons.close, color: Colors.black),
+                          buttonWidget: Icon(Icons.search, color:  getColors()[0]),
+                          onChanged: (newValue){
+
+                            if(newValue.toString().isEmpty){
+                              blocApiPokemon.changePokemons(items);
+                            }else{
+                              List newArrayItems = [];
+                              blocApiPokemon.changePokemons(newArrayItems);
+                              
+                              
+                              for(var p in items){
+                                if(p["name"].toString().toLowerCase().contains(newValue.toString().toLowerCase())){
+                                    newArrayItems.add(p);
+                                }
+                              }
+                              blocApiPokemon.changePokemons(newArrayItems);
+                            }
+                        }
+                      ),
+                );
+      }else{
+        return Container(
+          height: responsive.ip(6),
+          width: width * 0.8,
+        );
+      }
+     }
+   );
+ }
 }
