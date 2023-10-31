@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_json_view/flutter_json_view.dart';
 import 'package:pokemon/src/services/colores.dart';
 import 'package:pokemon/src/services/http_v1.dart';
 import 'package:pokemon/src/ulils/responsive.dart';
@@ -50,12 +53,69 @@ class DetailOfItem extends StatelessWidget {
           if(snapshot.hasData){
             EasyLoading.dismiss();
 
+            print(snapshot.data["effect_entries"].toString());
+            List<Widget> listEffects = [];
+            
+            for(var e in snapshot.data["effect_entries"]){
+              listEffects.add(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: width * 0.2,
+                      child: Text("Effect: ",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          color: getColors()[0],
+                          fontSize: responsive.ip(2),
+                          fontWeight: FontWeight.bold,
+                          // fontStyle: FontStyle.italic
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: width * 0.7,
+                      child: Expanded(
+                        child: Text(e["effect"],
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                             color: getColors()[0],
+                            fontSize: responsive.ip(1.5),
+                            fontWeight: FontWeight.bold,
+                            // fontStyle: FontStyle.italic
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              );
+            }
+
+
             return Container(
               height: height,
               width: width,
               child: Column(
                 children: [
-                  _tablePokemon(responsive, snapshot.data["pokemon"]),
+                  SizedBox(
+                    height: height * 0.01,
+                  ),
+                  Container(
+                    width: width * 0.9,
+                    height: height * 0.2,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: listEffects,
+                      ),
+                    ),
+                  ),
+                   Divider(
+                    color: getColors()[0],
+                    indent: 10,
+                   ),
+                  _tablePokemon(height, width, responsive, snapshot.data["pokemon"]),
                 ],
               ),
             );
@@ -78,7 +138,7 @@ class DetailOfItem extends StatelessWidget {
 
 
 
-  Widget _tablePokemon(Responsive responsive, List pokemons){
+  Widget _tablePokemon(double height, double width, Responsive responsive, List pokemons){
 
     List<DataRow> dataRoww = [];
 
@@ -93,21 +153,23 @@ class DetailOfItem extends StatelessWidget {
       }
 
     return Container(
-                  child: SingleChildScrollView(
-                  child: DataTable(
-                      columnSpacing: 3,
-                      horizontalMargin: 12,
-                      columns: [
-                        DataColumn(
-                          label: Text('Nombre',style: TextStyle(color: Color(0xff999999), fontSize: responsive.ip(2), fontWeight: FontWeight.w600)),
-                        ),
-                        DataColumn(
-                          label: Text('URL',style: TextStyle(color: Color(0xff999999), fontSize: responsive.ip(2), fontWeight: FontWeight.w600)),
-                        )
-                      ],
-                      rows: dataRoww
-          ),
+              height: height * 0.62,
+              width: width,
+                child: SingleChildScrollView(
+                child: DataTable(
+                    columnSpacing: 3,
+                    horizontalMargin: 12,
+                    columns: [
+                      DataColumn(
+                        label: Text('Nombre',style: TextStyle(color: Color(0xff999999), fontSize: responsive.ip(2), fontWeight: FontWeight.w600)),
+                      ),
+                      DataColumn(
+                        label: Text('URL',style: TextStyle(color: Color(0xff999999), fontSize: responsive.ip(2), fontWeight: FontWeight.w600)),
+                      )
+                    ],
+                    rows: dataRoww
         ),
-      );
+      ),
+    );
   }
 }
