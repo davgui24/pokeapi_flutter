@@ -17,7 +17,6 @@ class _HomeState extends State<Home> {
     // TODO: implement initState
     super.initState();
     HttpV1().pokemonAbility().then((value){
-      print(">>>>>>>>>>>>>>>>>>>>>  RESULT  ${value["results"]}");
       blocApiPokemon.changePokemons(value["results"]);
     });
   }
@@ -60,7 +59,39 @@ class _HomeState extends State<Home> {
               stream: blocApiPokemon.pokemonsStream,
               builder: (context, snapshot) {
                 if(snapshot.hasData){
-                  return Container();
+                  List<Widget> listWidgets = [];
+                  for(var p in snapshot.data!){
+                    listWidgets.add(
+                      ListTile(
+                        contentPadding: EdgeInsets.all(responsive.ip(2)),
+                        title: Text('${p["name"].toString().toUpperCase()}',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: getColors()[0],
+                              fontSize: responsive.ip(3),
+                              fontWeight: FontWeight.bold,
+                              // fontStyle: FontStyle.italic
+                            ),
+                          ),
+                        subtitle: Text('${p["url"]}',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: responsive.ip(2),
+                              fontWeight: FontWeight.bold,
+                              // fontStyle: FontStyle.italic
+                            ),
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.arrow_right, color: getColors()[0], size: responsive.ip(4)),
+                            onPressed: (){},
+                          ),
+                       )
+                    );
+                  }
+                  return Column(
+                    children: listWidgets,
+                  );
                 }else if(snapshot.hasError){
                   return Text("Error al obtener la lista",
                     style: TextStyle(
