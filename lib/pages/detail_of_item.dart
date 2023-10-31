@@ -49,15 +49,13 @@ class DetailOfItem extends StatelessWidget {
 
           if(snapshot.hasData){
             EasyLoading.dismiss();
-           print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> URL ITEM  ${snapshot.data}");
 
             return Container(
               height: height,
               width: width,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  
+                  _tablePokemon(responsive, snapshot.data["pokemon"]),
                 ],
               ),
             );
@@ -76,5 +74,40 @@ class DetailOfItem extends StatelessWidget {
         }
       ),
     );;
+  }
+
+
+
+  Widget _tablePokemon(Responsive responsive, List pokemons){
+
+    List<DataRow> dataRoww = [];
+
+    for(var a in pokemons){
+        dataRoww.add(DataRow(
+            selected: true,
+            cells: [
+              DataCell(Text(a["pokemon"]["name"])),
+              DataCell(Text(a["pokemon"]["url"])),
+          ])
+        );
+      }
+
+    return Container(
+                  child: SingleChildScrollView(
+                  child: DataTable(
+                      columnSpacing: 3,
+                      horizontalMargin: 12,
+                      columns: [
+                        DataColumn(
+                          label: Text('Nombre',style: TextStyle(color: Color(0xff999999), fontSize: responsive.ip(2), fontWeight: FontWeight.w600)),
+                        ),
+                        DataColumn(
+                          label: Text('URL',style: TextStyle(color: Color(0xff999999), fontSize: responsive.ip(2), fontWeight: FontWeight.w600)),
+                        )
+                      ],
+                      rows: dataRoww
+          ),
+        ),
+      );
   }
 }
