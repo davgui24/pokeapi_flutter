@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:pokemon/enviromets/url_server.dart';
 
+// Documentación Pokémon API: https://pokeapi.co/docs/v2
+
 
 class HttpV1 {
   final String _api = urlserver.url;
