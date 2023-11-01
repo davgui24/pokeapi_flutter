@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'UMAYOR',
+        title: 'POKEAPI',
         debugShowCheckedModeBanner: false,
         builder: EasyLoading.init(),
         initialRoute: 'home',
